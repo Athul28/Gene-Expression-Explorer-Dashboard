@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Download,
@@ -13,21 +13,51 @@ import {
   TrendingUp,
   Brain,
   Loader2,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type PlotType = "pca" | "kmeans" | "tsne" | "umap";
+
+const plotEndpoints: Record<PlotType, string> = {
+  pca: "http://localhost:5000/pca-plot",
+  kmeans: "http://localhost:5000/kmeans-plot",
+  tsne: "http://localhost:5000/tsne-plot",
+  umap: "http://localhost:5000/umap-plot",
+};
 
 export default function AnalysisPage() {
-  const router = useRouter()
-  const [aiSummary, setAiSummary] = useState("")
-  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
-  const [selectedDataset] = useState("Breast Cancer Gene Expression")
+  const router = useRouter();
+  const [aiSummary, setAiSummary] = useState("");
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [selectedDataset] = useState("Breast Cancer Gene Expression");
+
+  const [images, setImages] = useState<Record<PlotType, string | null>>({
+    pca: null,
+    kmeans: null,
+    tsne: null,
+    umap: null,
+  });
+
+  const [error, setError] = useState<string | null>(null);
 
   const generateAISummary = async () => {
-    setIsGeneratingSummary(true)
+    setIsGeneratingSummary(true);
     // Simulate AI processing
     setTimeout(() => {
       setAiSummary(`
@@ -41,10 +71,32 @@ export default function AnalysisPage() {
 • **Treatment Response**: Patients with high immune infiltration scores show better response to immunotherapy (response rate: 78% vs 34%)
 
 **Clinical Implications**: These findings suggest that immune-related gene signatures could guide treatment selection and improve patient outcomes in breast cancer management.
-      `)
-      setIsGeneratingSummary(false)
-    }, 3000)
-  }
+      `);
+      setIsGeneratingSummary(false);
+    }, 3000);
+  };
+
+  useEffect(() => {
+    async function fetchPlots() {
+      try {
+        const results: Partial<Record<PlotType, string>> = {};
+
+        for (const type of Object.keys(plotEndpoints) as PlotType[]) {
+          const res = await fetch(plotEndpoints[type]);
+          if (!res.ok) {
+            throw new Error(`Failed to fetch ${type} plot`);
+          }
+          const data = await res.json();
+          results[type] = data.image || null;
+        }
+        setImages((prev) => ({ ...prev, ...results }));
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch plots");
+      }
+    }
+
+    fetchPlots();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -58,7 +110,9 @@ export default function AnalysisPage() {
             </Button>
             <div>
               <h1 className="text-lg font-semibold">{selectedDataset}</h1>
-              <p className="text-sm text-gray-600">1,250 samples • Updated Nov 2023</p>
+              <p className="text-sm text-gray-600">
+                1,250 samples • Updated Nov 2023
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -70,7 +124,10 @@ export default function AnalysisPage() {
               <Share2 className="h-4 w-4 mr-2" />
               Share
             </Button>
-            <Button size="sm" className="bg-gradient-to-r from-teal-500 to-cyan-600">
+            <Button
+              size="sm"
+              className="bg-gradient-to-r from-teal-500 to-cyan-600"
+            >
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
@@ -85,7 +142,7 @@ export default function AnalysisPage() {
             <Tabs defaultValue="overview" className="space-y-6">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="heatmap">Heatmap</TabsTrigger>
+                <TabsTrigger value="heatmap">Plots</TabsTrigger>
                 <TabsTrigger value="volcano">Volcano Plot</TabsTrigger>
                 <TabsTrigger value="survival">Survival</TabsTrigger>
                 <TabsTrigger value="pathways">Pathways</TabsTrigger>
@@ -95,19 +152,27 @@ export default function AnalysisPage() {
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">Total Genes</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Total Genes
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">20,531</div>
-                      <p className="text-xs text-gray-600">Protein-coding genes</p>
+                      <p className="text-xs text-gray-600">
+                        Protein-coding genes
+                      </p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">Differentially Expressed</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Differentially Expressed
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-red-600">2,847</div>
+                      <div className="text-2xl font-bold text-red-600">
+                        2,847
+                      </div>
                       <p className="text-xs text-gray-600">
                         p {"<"} 0.05, |log2FC| {">"} 1.5
                       </p>
@@ -115,19 +180,27 @@ export default function AnalysisPage() {
                   </Card>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">Upregulated</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Upregulated
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-green-600">1,523</div>
+                      <div className="text-2xl font-bold text-green-600">
+                        1,523
+                      </div>
                       <p className="text-xs text-gray-600">53.5% of DE genes</p>
                     </CardContent>
                   </Card>
                   <Card>
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium">Downregulated</CardTitle>
+                      <CardTitle className="text-sm font-medium">
+                        Downregulated
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-blue-600">1,324</div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        1,324
+                      </div>
                       <p className="text-xs text-gray-600">46.5% of DE genes</p>
                     </CardContent>
                   </Card>
@@ -136,7 +209,9 @@ export default function AnalysisPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Expression Overview</CardTitle>
-                    <CardDescription>Sample distribution and quality metrics</CardDescription>
+                    <CardDescription>
+                      Sample distribution and quality metrics
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-6 md:grid-cols-2">
@@ -148,14 +223,20 @@ export default function AnalysisPage() {
                             <span className="font-medium">1,097 (87.8%)</span>
                           </div>
                           <div className="w-full h-2 bg-gray-100 rounded-full">
-                            <div className="h-full bg-red-500 rounded-full" style={{ width: "87.8%" }} />
+                            <div
+                              className="h-full bg-red-500 rounded-full"
+                              style={{ width: "87.8%" }}
+                            />
                           </div>
                           <div className="flex justify-between text-sm">
                             <span>Normal Samples</span>
                             <span className="font-medium">153 (12.2%)</span>
                           </div>
                           <div className="w-full h-2 bg-gray-100 rounded-full">
-                            <div className="h-full bg-green-500 rounded-full" style={{ width: "12.2%" }} />
+                            <div
+                              className="h-full bg-green-500 rounded-full"
+                              style={{ width: "12.2%" }}
+                            />
                           </div>
                         </div>
                       </div>
@@ -172,7 +253,10 @@ export default function AnalysisPage() {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-sm">Batch Effect</span>
-                            <Badge variant="secondary" className="bg-green-100 text-green-700">
+                            <Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-700"
+                            >
                               Corrected
                             </Badge>
                           </div>
@@ -186,21 +270,27 @@ export default function AnalysisPage() {
               <TabsContent value="heatmap" className="space-y-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Gene Expression Heatmap</CardTitle>
-                    <CardDescription>Hierarchical clustering of top 100 differentially expressed genes</CardDescription>
+                    <CardTitle>Plots</CardTitle>
+                    <CardDescription>Different Clusters</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
+                      {/* <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <Select defaultValue="top100">
                             <SelectTrigger className="w-48">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="top100">Top 100 DE Genes</SelectItem>
-                              <SelectItem value="top500">Top 500 DE Genes</SelectItem>
-                              <SelectItem value="custom">Custom Gene Set</SelectItem>
+                              <SelectItem value="top100">
+                                Top 100 DE Genes
+                              </SelectItem>
+                              <SelectItem value="top500">
+                                Top 500 DE Genes
+                              </SelectItem>
+                              <SelectItem value="custom">
+                                Custom Gene Set
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                           <Select defaultValue="euclidean">
@@ -208,9 +298,15 @@ export default function AnalysisPage() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="euclidean">Euclidean</SelectItem>
-                              <SelectItem value="correlation">Correlation</SelectItem>
-                              <SelectItem value="manhattan">Manhattan</SelectItem>
+                              <SelectItem value="euclidean">
+                                Euclidean
+                              </SelectItem>
+                              <SelectItem value="correlation">
+                                Correlation
+                              </SelectItem>
+                              <SelectItem value="manhattan">
+                                Manhattan
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -218,30 +314,30 @@ export default function AnalysisPage() {
                           <Download className="h-4 w-4 mr-2" />
                           Export
                         </Button>
-                      </div>
+                      </div> */}
 
                       <div className="aspect-[4/3] bg-white rounded-lg border p-4">
-                        <div className="h-full flex flex-col">
-                          <div className="flex-1 grid grid-cols-20 gap-px">
-                            {Array.from({ length: 2000 }, (_, i) => (
-                              <div
-                                key={i}
-                                className={`aspect-square ${
-                                  Math.random() > 0.7
-                                    ? "bg-red-500"
-                                    : Math.random() > 0.4
-                                      ? "bg-yellow-400"
-                                      : "bg-teal-500"
-                                }`}
-                                style={{ opacity: Math.random() * 0.8 + 0.2 }}
+                        <div
+                          style={{ maxWidth: 900, margin: "auto", padding: 20 }}
+                        >
+                          <h1>Gene Expression Plots - GSE96058</h1>
+
+                          {Object.entries(images).map(([key, base64]) => (
+                            <div key={key} style={{ marginBottom: 40 }}>
+                              <h2 style={{ textTransform: "uppercase" }}>
+                                {key} plot
+                              </h2>
+                              <img
+                                src={`data:image/png;base64,${base64}`}
+                                alt={`${key} plot`}
+                                style={{
+                                  width: "100%",
+                                  border: "1px solid #ccc",
+                                  borderRadius: 8,
+                                }}
                               />
-                            ))}
-                          </div>
-                          <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
-                            <span>Low Expression</span>
-                            <div className="w-48 h-3 bg-gradient-to-r from-teal-500 via-yellow-400 to-red-500 rounded-full" />
-                            <span>High Expression</span>
-                          </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -254,7 +350,8 @@ export default function AnalysisPage() {
                   <CardHeader>
                     <CardTitle>Volcano Plot</CardTitle>
                     <CardDescription>
-                      Differential expression analysis showing fold change vs statistical significance
+                      Differential expression analysis showing fold change vs
+                      statistical significance
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -262,7 +359,9 @@ export default function AnalysisPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="flex items-center gap-2">
-                            <label className="text-sm">p-value threshold:</label>
+                            <label className="text-sm">
+                              p-value threshold:
+                            </label>
                             <Select defaultValue="0.05">
                               <SelectTrigger className="w-24">
                                 <SelectValue />
@@ -315,15 +414,19 @@ export default function AnalysisPage() {
 
                           {/* Data points */}
                           {Array.from({ length: 200 }, (_, i) => {
-                            const x = (Math.random() - 0.5) * 2 * 0.9
-                            const y = Math.random() * 0.9
-                            const significant = y > 0.3 && Math.abs(x) > 0.25
+                            const x = (Math.random() - 0.5) * 2 * 0.9;
+                            const y = Math.random() * 0.9;
+                            const significant = y > 0.3 && Math.abs(x) > 0.25;
 
                             return (
                               <div
                                 key={i}
                                 className={`absolute rounded-full ${
-                                  significant ? (x < 0 ? "bg-blue-500" : "bg-red-500") : "bg-gray-400"
+                                  significant
+                                    ? x < 0
+                                      ? "bg-blue-500"
+                                      : "bg-red-500"
+                                    : "bg-gray-400"
                                 }`}
                                 style={{
                                   width: significant ? "6px" : "4px",
@@ -334,7 +437,7 @@ export default function AnalysisPage() {
                                   opacity: significant ? 0.8 : 0.4,
                                 }}
                               />
-                            )
+                            );
                           })}
 
                           {/* Legend */}
@@ -363,7 +466,10 @@ export default function AnalysisPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Survival Analysis</CardTitle>
-                    <CardDescription>Kaplan-Meier survival curves based on gene expression signatures</CardDescription>
+                    <CardDescription>
+                      Kaplan-Meier survival curves based on gene expression
+                      signatures
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
@@ -373,9 +479,15 @@ export default function AnalysisPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="immune_signature">Immune Signature</SelectItem>
-                            <SelectItem value="proliferation">Proliferation Score</SelectItem>
-                            <SelectItem value="custom_genes">Custom Gene Set</SelectItem>
+                            <SelectItem value="immune_signature">
+                              Immune Signature
+                            </SelectItem>
+                            <SelectItem value="proliferation">
+                              Proliferation Score
+                            </SelectItem>
+                            <SelectItem value="custom_genes">
+                              Custom Gene Set
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <div className="flex items-center gap-2">
@@ -440,7 +552,9 @@ export default function AnalysisPage() {
                               <div className="w-4 h-0.5 bg-red-500"></div>
                               <span>Low Expression (n=625)</span>
                             </div>
-                            <div className="text-xs text-gray-600 pt-1">Log-rank p {"<"} 0.001</div>
+                            <div className="text-xs text-gray-600 pt-1">
+                              Log-rank p {"<"} 0.001
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -453,7 +567,10 @@ export default function AnalysisPage() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Pathway Enrichment Analysis</CardTitle>
-                    <CardDescription>KEGG and GO pathway enrichment for differentially expressed genes</CardDescription>
+                    <CardDescription>
+                      KEGG and GO pathway enrichment for differentially
+                      expressed genes
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
@@ -464,8 +581,12 @@ export default function AnalysisPage() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="kegg">KEGG Pathways</SelectItem>
-                            <SelectItem value="go_bp">GO Biological Process</SelectItem>
-                            <SelectItem value="go_mf">GO Molecular Function</SelectItem>
+                            <SelectItem value="go_bp">
+                              GO Biological Process
+                            </SelectItem>
+                            <SelectItem value="go_mf">
+                              GO Molecular Function
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <Select defaultValue="upregulated">
@@ -473,8 +594,12 @@ export default function AnalysisPage() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="upregulated">Upregulated</SelectItem>
-                            <SelectItem value="downregulated">Downregulated</SelectItem>
+                            <SelectItem value="upregulated">
+                              Upregulated
+                            </SelectItem>
+                            <SelectItem value="downregulated">
+                              Downregulated
+                            </SelectItem>
                             <SelectItem value="all">All DE Genes</SelectItem>
                           </SelectContent>
                         </Select>
@@ -482,27 +607,76 @@ export default function AnalysisPage() {
 
                       <div className="space-y-4">
                         {[
-                          { name: "Cell cycle", pvalue: 2.3e-15, genes: 89, color: "bg-red-500" },
-                          { name: "DNA replication", pvalue: 1.2e-12, genes: 45, color: "bg-orange-500" },
-                          { name: "p53 signaling pathway", pvalue: 3.4e-10, genes: 32, color: "bg-yellow-500" },
-                          { name: "Immune response", pvalue: 5.6e-9, genes: 67, color: "bg-green-500" },
-                          { name: "Apoptosis", pvalue: 2.1e-8, genes: 28, color: "bg-blue-500" },
-                          { name: "MAPK signaling", pvalue: 8.9e-7, genes: 54, color: "bg-indigo-500" },
-                          { name: "Angiogenesis", pvalue: 1.4e-6, genes: 23, color: "bg-purple-500" },
-                          { name: "Metabolism", pvalue: 3.2e-5, genes: 78, color: "bg-pink-500" },
+                          {
+                            name: "Cell cycle",
+                            pvalue: 2.3e-15,
+                            genes: 89,
+                            color: "bg-red-500",
+                          },
+                          {
+                            name: "DNA replication",
+                            pvalue: 1.2e-12,
+                            genes: 45,
+                            color: "bg-orange-500",
+                          },
+                          {
+                            name: "p53 signaling pathway",
+                            pvalue: 3.4e-10,
+                            genes: 32,
+                            color: "bg-yellow-500",
+                          },
+                          {
+                            name: "Immune response",
+                            pvalue: 5.6e-9,
+                            genes: 67,
+                            color: "bg-green-500",
+                          },
+                          {
+                            name: "Apoptosis",
+                            pvalue: 2.1e-8,
+                            genes: 28,
+                            color: "bg-blue-500",
+                          },
+                          {
+                            name: "MAPK signaling",
+                            pvalue: 8.9e-7,
+                            genes: 54,
+                            color: "bg-indigo-500",
+                          },
+                          {
+                            name: "Angiogenesis",
+                            pvalue: 1.4e-6,
+                            genes: 23,
+                            color: "bg-purple-500",
+                          },
+                          {
+                            name: "Metabolism",
+                            pvalue: 3.2e-5,
+                            genes: 78,
+                            color: "bg-pink-500",
+                          },
                         ].map((pathway, index) => (
                           <div key={index} className="space-y-2">
                             <div className="flex justify-between items-center">
-                              <span className="font-medium">{pathway.name}</span>
+                              <span className="font-medium">
+                                {pathway.name}
+                              </span>
                               <div className="flex items-center gap-4 text-sm text-gray-600">
                                 <span>{pathway.genes} genes</span>
-                                <span>p = {pathway.pvalue.toExponential(1)}</span>
+                                <span>
+                                  p = {pathway.pvalue.toExponential(1)}
+                                </span>
                               </div>
                             </div>
                             <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                               <div
                                 className={`h-full ${pathway.color}`}
-                                style={{ width: `${Math.min((-Math.log10(pathway.pvalue) / 15) * 100, 100)}%` }}
+                                style={{
+                                  width: `${Math.min(
+                                    (-Math.log10(pathway.pvalue) / 15) * 100,
+                                    100
+                                  )}%`,
+                                }}
                               />
                             </div>
                           </div>
@@ -523,7 +697,9 @@ export default function AnalysisPage() {
                   <Brain className="h-5 w-5 text-purple-600" />
                   AI Analysis Summary
                 </CardTitle>
-                <CardDescription>Get AI-powered insights from your data</CardDescription>
+                <CardDescription>
+                  Get AI-powered insights from your data
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Button
@@ -548,7 +724,9 @@ export default function AnalysisPage() {
                   <div className="space-y-3">
                     <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                       <div className="prose prose-sm max-w-none">
-                        <div className="whitespace-pre-line text-sm">{aiSummary}</div>
+                        <div className="whitespace-pre-line text-sm">
+                          {aiSummary}
+                        </div>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -593,5 +771,5 @@ export default function AnalysisPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

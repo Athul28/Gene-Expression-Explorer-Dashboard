@@ -1,13 +1,13 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 
 type PlotType = "pca" | "kmeans" | "tsne" | "umap";
 
 const plotEndpoints: Record<PlotType, string> = {
-  pca: "http://localhost:5000/pca-plot",
-  kmeans: "http://localhost:5000/kmeans-plot",
-  tsne: "http://localhost:5000/tsne-plot",
-  umap: "http://localhost:5000/umap-plot",
+  pca: "https://58a6-103-171-58-188.ngrok-free.app/pca-plot",
+  kmeans: "https://58a6-103-171-58-188.ngrok-free.app/kmeans-plot",
+  tsne: "https://58a6-103-171-58-188.ngrok-free.app/tsne-plot",
+  umap: "https://58a6-103-171-58-188.ngrok-free.app/umap-plot",
 };
 
 export default function Home() {
@@ -26,7 +26,11 @@ export default function Home() {
         const results: Partial<Record<PlotType, string>> = {};
 
         for (const type of Object.keys(plotEndpoints) as PlotType[]) {
-          const res = await fetch(plotEndpoints[type]);
+          const res = await fetch(plotEndpoints[type], {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          });
           if (!res.ok) {
             throw new Error(`Failed to fetch ${type} plot`);
           }
