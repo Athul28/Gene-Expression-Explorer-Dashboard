@@ -1,3 +1,48 @@
+# 🧬 Gene Expression Explorer
+
+**Gene Expression Explorer** is a web-based tool for analyzing and visualizing gene expression differences between healthy and disease states using data from NCBI's Gene Expression Omnibus (GEO). It combines robust statistical pipelines, machine learning classifiers, and interactive visualizations to support biomedical research and discovery.
+
+## 🔍 Project Overview
+
+- **Data Source**: GEO repository (microarray & RNA-seq)
+- **Core Functions**:
+  - Dataset search & filtering
+  - Preprocessing & quality control
+  - Differential gene expression (DGE) analysis (via DESeq2-style models)
+  - Machine learning classifiers 
+  - Visualizations: heatmaps, PCA, volcano plots
+
+## ⚙️ Tech Stack
+
+- **Backend**: Flask
+- **Frontend**: Next.js, Tailwind CSS
+- **Database**: GEO Repository
+
+
+## 🎯 Key Features
+
+- 🔎 Advanced GEO dataset querying
+- 📊 Interactive gene expression visualization
+- 🧠 Classifier for healthy vs disease state detection
+- 🧬 Integration with Gene Ontology/KEGG
+- 🛡️ Quality control, FDR correction, cross-validation
+
+## 🎓 Impact
+
+This tool democratizes gene expression analysis for research and education, offering:
+- Faster biomarker discovery
+- Accessible genomic insights for non-bioinformaticians
+- A modular, reproducible pipeline for large-scale studies
+
+
+# Architecture:
+
+![image](https://github.com/user-attachments/assets/d0f1cc26-1782-48bb-8a04-1315df60e066)
+
+
+# Attached microservice for just data visualizers:  https://github.com/VarshithPawarHR/-Gene-Expression-Explorer
+
+---
 
 # 🌐 Next.js Application
 
