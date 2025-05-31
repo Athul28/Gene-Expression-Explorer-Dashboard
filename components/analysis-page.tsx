@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import DownloadTextButton from "./Dowload";
 
 type PlotType = "pca" | "kmeans" | "tsne" | "umap";
 
@@ -116,14 +117,6 @@ export default function AnalysisPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Settings className="h-4 w-4 mr-2" />
-              Configure
-            </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </Button>
             <Button
               size="sm"
               className="bg-gradient-to-r from-teal-500 to-cyan-600"
@@ -485,14 +478,7 @@ export default function AnalysisPage() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <Download className="h-4 w-4 mr-2" />
-                        Export
-                      </Button>
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <Share2 className="h-4 w-4 mr-2" />
-                        Share
-                      </Button>
+                      <DownloadTextButton text={aiSummary} filename="summary" />
                     </div>
                   </div>
                 )}

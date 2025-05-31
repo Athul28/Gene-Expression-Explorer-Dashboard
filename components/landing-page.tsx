@@ -131,25 +131,47 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-lg px-8"
-                >
-                  <Link href="#datasets" className="flex items-center">
-                    Start Exploring
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="text-lg px-8">
-                  <Link
-                    href="https://www.ncbi.nlm.nih.gov/home/learn/"
-                    className="flex items-center"
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-lg px-8"
                   >
-                    Learn More
-                  </Link>
-                </Button>
+                    <Link href="#datasets" className="flex items-center">
+                      Start Exploring
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button size="lg" variant="outline" className="text-lg px-8">
+                    <Link
+                      href="https://www.ncbi.nlm.nih.gov/home/learn/"
+                      className="flex items-center"
+                    >
+                      Learn More
+                    </Link>
+                  </Button>
+
+                </div>
+                <div className="flex">
+                  <div className="flex justify-center mb-8">
+                    <Button
+                      asChild
+                      size="lg"
+                      className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-lg px-8"
+                    >
+                      <a
+                        href="https://gene-expresion-explorer.streamlit.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center"
+                      >
+                        <ExternalLink className="mr-2 h-5 w-5" />
+                        Interactive Gene Expression Explorer
+                      </a>
+                    </Button>
+                  </div>
+                </div>
               </div>
 
               <div className="flex items-center space-x-8 text-sm text-gray-600">
@@ -178,13 +200,12 @@ export default function LandingPage() {
                     {Array.from({ length: 100 }, (_, i) => (
                       <div
                         key={i}
-                        className={`aspect-square rounded-sm ${
-                          Math.random() > 0.7
-                            ? "bg-red-500"
-                            : Math.random() > 0.4
+                        className={`aspect-square rounded-sm ${Math.random() > 0.7
+                          ? "bg-red-500"
+                          : Math.random() > 0.4
                             ? "bg-yellow-400"
                             : "bg-teal-500"
-                        }`}
+                          }`}
                         style={{ opacity: Math.random() * 0.8 + 0.2 }}
                       />
                     ))}
@@ -347,7 +368,7 @@ export default function LandingPage() {
                       <span className="text-teal-400">$</span>
                       <span className="ml-2">
                         git clone
-                        https://github.com/your-username/gene-expression-explorer.git
+                        https://github.com/VarshithPawarHR/Gene-Expression-Explorer-Dashboard
                       </span>
                     </div>
                   </div>
