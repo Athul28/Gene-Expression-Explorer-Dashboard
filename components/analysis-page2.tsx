@@ -415,6 +415,60 @@ export default function AnalysisPage2() {
               </TabsContent>
             </Tabs>
           </div>
+            <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-purple-600" />
+                  AI Analysis Summary
+                </CardTitle>
+                <CardDescription>
+                  Get AI-powered insights from your data
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Button
+                  onClick={generateAISummary}
+                  disabled={isGeneratingSummary}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                >
+                  {isGeneratingSummary ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="mr-2 h-4 w-4" />
+                      Generate Summary
+                    </>
+                  )}
+                </Button>
+
+                {aiSummary && (
+                  <div className="space-y-3">
+                    <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                      <div className="prose prose-sm max-w-none">
+                        <div className="whitespace-pre-line text-sm">
+                          {aiSummary}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Download className="h-4 w-4 mr-2" />
+                        Export
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Share
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            </div>
         </div>
       </div>
     </div>
