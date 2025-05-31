@@ -43,8 +43,10 @@ export default function LandingPage() {
       category: "cancer",
       samples: 1250,
       date: "2023-09-15",
-      image: "/placeholder.svg?height=120&width=240",
+      image:
+        "https://nanostring.com/wp-content/uploads/nCounter%C2%AE-Breast-Cancer-360%E2%84%A2-Panel-2.png",
       badge: "Popular",
+      route: "analysis",
     },
     {
       id: 2,
@@ -54,8 +56,10 @@ export default function LandingPage() {
       category: "covid19",
       samples: 520,
       date: "2024-03-10",
-      image: "/placeholder.svg?height=120&width=240",
+      image:
+        "https://www.mdpi.com/cancers/cancers-12-03822/article_deploy/html/images/cancers-12-03822-g001.png",
       badge: "Featured",
+      route: "analysis-2",
     },
   ];
 
@@ -261,7 +265,11 @@ export default function LandingPage() {
                   <Button
                     variant="ghost"
                     className="text-teal-600 hover:text-teal-700 hover:bg-teal-50"
-                    onClick={() => router.push("/analysis")}
+                    onClick={() => {
+                      if (dataset.route) {
+                        router.push(dataset.route);
+                      }
+                    }}
                   >
                     View Analysis
                     <ChevronRight className="ml-1 h-4 w-4" />
