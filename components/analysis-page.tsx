@@ -61,16 +61,16 @@ export default function AnalysisPage() {
     // Simulate AI processing
     setTimeout(() => {
       setAiSummary(`
-**Key Findings from ${selectedDataset} Analysis:**
+    Key Findings from ${selectedDataset} Analysis:
 
-• **Differential Expression**: Identified 2,847 significantly differentially expressed genes (p < 0.05, |log2FC| > 1.5)
-• **Upregulated Pathways**: Cell cycle regulation, DNA repair mechanisms, and immune response pathways show significant upregulation
-• **Biomarker Candidates**: BRCA1, TP53, and ERBB2 emerge as potential prognostic biomarkers with high predictive value
-• **Survival Correlation**: High expression of immune-related genes correlates with improved overall survival (HR: 0.68, p < 0.001)
-• **Subtype Classification**: Clear separation between luminal A, luminal B, HER2+, and triple-negative subtypes based on expression profiles
-• **Treatment Response**: Patients with high immune infiltration scores show better response to immunotherapy (response rate: 78% vs 34%)
+    • Differential Expression: Identified 2,847 significantly differentially expressed genes (p < 0.05, |log2FC| > 1.5)
+    • Upregulated Pathways: Cell cycle regulation, DNA repair mechanisms, and immune response pathways show significant upregulation
+    • Biomarker Candidates: BRCA1, TP53, and ERBB2 emerge as potential prognostic biomarkers with high predictive value
+    • Survival Correlation: High expression of immune-related genes correlates with improved overall survival (HR: 0.68, p < 0.001)
+    • Subtype Classification: Clear separation between luminal A, luminal B, HER2+, and triple-negative subtypes based on expression profiles
+    • Treatment Response: Patients with high immune infiltration scores show better response to immunotherapy (response rate: 78% vs 34%)
 
-**Clinical Implications**: These findings suggest that immune-related gene signatures could guide treatment selection and improve patient outcomes in breast cancer management.
+    Clinical Implications: These findings suggest that immune-related gene signatures could guide treatment selection and improve patient outcomes in breast cancer management.
       `);
       setIsGeneratingSummary(false);
     }, 3000);
@@ -445,7 +445,7 @@ export default function AnalysisPage() {
               </TabsContent>
             </Tabs>
           </div>
-                      <div className="space-y-6">
+          <div className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -498,7 +498,7 @@ export default function AnalysisPage() {
                 )}
               </CardContent>
             </Card>
-            </div>
+          </div>
         </div>
       </div>
     </div>
