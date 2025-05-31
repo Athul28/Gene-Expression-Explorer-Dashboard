@@ -47,47 +47,15 @@ export default function LandingPage() {
       badge: "Popular",
     },
     {
-      id: 3,
-      title: "Lung Adenocarcinoma",
+      id: 2,
+      title: "COVID-19 Lung Tissue Expression",
       description:
-        "Gene expression profiles from lung adenocarcinoma patients with clinical annotations",
-      category: "cancer",
-      samples: 780,
-      date: "2023-08-20",
+        "Gene expression profiling of lung tissue samples from COVID-19 patients",
+      category: "covid19",
+      samples: 520,
+      date: "2024-03-10",
       image: "/placeholder.svg?height=120&width=240",
-    },
-    {
-      id: 6,
-      title: "Colorectal Cancer Stages",
-      description:
-        "Stage-specific gene expression signatures in colorectal cancer development",
-      category: "cancer",
-      samples: 680,
-      date: "2023-09-28",
-      image: "/placeholder.svg?height=120&width=240",
-    },
-
-    {
-      id: 9,
-      title: "Glioblastoma Multiforme",
-      description:
-        "Molecular subtypes and treatment resistance patterns in glioblastoma",
-      category: "cancer",
-      samples: 380,
-      date: "2023-11-19",
-      image: "/placeholder.svg?height=120&width=240",
-    },
-
-    {
-      id: 12,
-      title: "Pancreatic Ductal Adenocarcinoma",
-      description:
-        "Early detection biomarkers and progression signatures in pancreatic cancer",
-      category: "cancer",
-      samples: 340,
-      date: "2023-12-10",
-      image: "/placeholder.svg?height=120&width=240",
-      badge: "New",
+      badge: "Featured",
     },
   ];
 
@@ -234,7 +202,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-12">
             <h2 className="text-3xl font-bold text-gray-900">
-              Explore 12 Handpicked Datasets
+              Explore 2 Handpicked Datasets
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Dive into curated gene expression datasets across multiple disease
@@ -248,12 +216,10 @@ export default function LandingPage() {
             onValueChange={setActiveTab}
           >
             <div className="flex justify-center">
-              <TabsList className="grid grid-cols-5 w-fit">
+              <TabsList className="grid grid-cols-3 w-fit">
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="cancer">Cancer</TabsTrigger>
-                <TabsTrigger value="covid">COVID-19</TabsTrigger>
-                <TabsTrigger value="cold">Cold/Flu</TabsTrigger>
-                <TabsTrigger value="lung">Lung Disease</TabsTrigger>
+                <TabsTrigger value="covid19">COVID-19</TabsTrigger>
               </TabsList>
             </div>
           </Tabs>
@@ -313,6 +279,23 @@ export default function LandingPage() {
         className="py-16 bg-gradient-to-br from-gray-900 to-gray-800 text-white"
       >
         <div className="container mx-auto px-4 md:px-6 lg:px-8">
+          <div className="flex justify-center mb-8">
+            <Button
+              asChild
+              size="lg"
+              className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-lg px-8"
+            >
+              <a
+                href="https://gene-expresion-explorer.streamlit.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <ExternalLink className="mr-2 h-5 w-5" />
+                Interactive Gene Expression Explorer
+              </a>
+            </Button>
+          </div>
           <div className="text-center space-y-4 mb-12">
             <Badge
               variant="secondary"
@@ -655,9 +638,6 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-
-      
-
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12">
